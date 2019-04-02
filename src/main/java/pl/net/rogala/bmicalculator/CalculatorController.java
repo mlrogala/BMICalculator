@@ -1,27 +1,40 @@
 package pl.net.rogala.bmicalculator;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import static java.lang.String.valueOf;
+import javax.validation.Valid;
 
 @Controller
 public class CalculatorController {
+    private CalculatorService calculatorService;
 
-    @GetMapping("/")
-    public String showHomePage(){
-        return "home";
+    @Autowired
+    public CalculatorController(CalculatorService calculatorService) {
+        this.calculatorService = calculatorService;
     }
 
-    @GetMapping("/bmi")
-    public String showBmi(Model model, Model modelTwo, Model modelThree, @RequestParam Double weight, @RequestParam Double hight){
-        model.addAttribute("weight", weight);
-        modelTwo.addAttribute("hight", hight);
-        String bmi = valueOf((weight.doubleValue())/((hight.doubleValue()*0.01)*(hight.doubleValue()*0.01)));
-        modelThree.addAttribute("bmi", bmi);
-        return "bmi";
+
+    @GetMapping("/")
+    public String showHomePage(Model model) {
+
+        model.addAttribute("bmiForm", new BmiForm());
+        return "bmiForm";
+    }
+
+    @PostMapping("/")
+    public String handleBmiFoerm(Model model,
+                                 @ModelAttribute @Valid BmiForm bmiForm, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "bmiForm";
+        }
+        String bmi = calculatorService.calculateBmi(bmiForm);
+        model.addAttribute("bmi", bmi);
+        return "result";
     }
 }

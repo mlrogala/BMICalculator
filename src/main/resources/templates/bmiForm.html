@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" >
+    <title>BMI</title>
+</head>
+<body>
+<form method="post" th:action="@{/}" th:object="${bmiForm}">
+    Waga: <input type="text" th:field="*{weight}" th:errorClass="error">
+    <span class="error" th:errors="*{weight}"></span>
+    <br>Wzrost w centymetrach: <input type="text" th:field="*{hight}" th:errorClass="error">
+    <span class="error" th:errors="*{hight}"></span>
+    <br><input type="submit" value="Oblicz BMI">
+</form>
+</body>
+</html>
